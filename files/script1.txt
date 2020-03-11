@@ -1,0 +1,2 @@
+add {"name":"Степан";"height":"200";}
+count_by_hair_color Pink

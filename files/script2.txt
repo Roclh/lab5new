@@ -1,0 +1,7 @@
+execute_script files/script1.txt
+execute_script files/script1.txt
+execute_script files/script1.txt
+execute_script files/script1.txt
+execute_script files/script2.txt
+show
+info
