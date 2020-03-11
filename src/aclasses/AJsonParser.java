@@ -47,9 +47,13 @@ public abstract class AJsonParser implements IJsonParser {
      * @throws IOException
      * Может выбрасывать исключение в случае неверного файла для записи
      */
-    public void resetSaveFile() throws IOException {
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        fileOutputStream.write("".getBytes());
+    public void resetSaveFile(){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write("".getBytes());
+        } catch (IOException e){
+            System.out.println("Ошибка отчистки файла");
+        }
     }
 
     /**
