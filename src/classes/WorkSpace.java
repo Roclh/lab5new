@@ -135,7 +135,7 @@ public class WorkSpace {
                         if (!command.getArg1().equals(""))
                             System.out.println("В данной команде нету второго аргумента");
                         else
-                            isWorking = controller.exit();
+                            controller.exit();
                         break;
                     case "print_unique_height":
                         controller.printUniqueHeight(queueController);
