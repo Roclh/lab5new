@@ -24,8 +24,8 @@ import java.util.Queue;
 import java.util.Scanner;
 
 /**
-"Панель управления" программой. Тут находятся методы, исполняющие все пользовательские комманды
-Названия методов совпадают с коммандами
+ * "Панель управления" программой. Тут находятся методы, исполняющие все пользовательские комманды
+ * Названия методов совпадают с коммандами
  */
 
 
@@ -40,12 +40,12 @@ public class Controller {
 
     /**
      * Контроллер будет просить ввести путь к файлу до тех пор, пока не будет написан верный путь
-     * @throws FileNotFoundException
-     * Может выбрасывать исключения
+     *
+     * @throws FileNotFoundException Может выбрасывать исключения
      */
     public Controller() throws FileNotFoundException {
-            String buf = terminal.readLine("Введите путь к файлу");
-            this.jsonParser.setFile(buf);
+        String buf = terminal.readLine("Введите путь к файлу");
+        this.jsonParser.setFile(buf);
     }
 
     /**
@@ -75,8 +75,8 @@ public class Controller {
     /**
      * Метод help с аргументом выводит подробную информацию о конкретной команде, как ей пользоваться
      * и как она должна выглядеть
-     * @param commandName
-     * В качестве параметра поступает команда, любая из метода help
+     *
+     * @param commandName В качестве параметра поступает команда, любая из метода help
      */
     public void help(String commandName) {
         switch (commandName) {
@@ -211,9 +211,9 @@ public class Controller {
 
     /**
      * Метод, осуществляющий загрузку из файла.
+     *
+     * @return Возвращает новый объект класса QueueController, который может реализовывать методы работы с коллекцией
      * @see QueueController
-     * @return
-     * Возвращает новый объект класса QueueController, который может реализовывать методы работы с коллекцией
      */
     public QueueController load() {
         return new QueueController(this.jsonParser);
@@ -221,8 +221,8 @@ public class Controller {
 
     /**
      * Метод, который выводит всю коллекцию на экран в формате сокращенного json
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который исполняет вывод коллекции на экран
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который исполняет вывод коллекции на экран
      */
     public void show(QueueController queueController) {
         queueController.showQueue();
@@ -230,8 +230,8 @@ public class Controller {
 
     /**
      * Метод выводит общую информацию о коллекции
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе коллекцию
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе коллекцию
      */
     public void info(QueueController queueController) {
         System.out.println("Информация о коллекции: ");
@@ -246,13 +246,13 @@ public class Controller {
 
     /**
      * Метод сохраняет все элементы коллекции в файл
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      */
-    public void save(QueueController queueController){
-        if (jsonParser.isWritable()) {
-            try {
+    public void save(QueueController queueController) {
+        try {
+            if (jsonParser.isWritable()) {
+
                 if (queueController.getQueue().size() > 0) {
                     Queue<Person> bufQueue = new PriorityQueue<>(queueController.getQueue());
                     jsonParser.resetSaveFile();
@@ -260,35 +260,36 @@ public class Controller {
                         try {
                             jsonParser.savePerson(person);
                         } catch (IOException ex) {
-                            ex.printStackTrace();
+                            System.out.println("Поеш гавна");
                         }
                     });
                     System.out.println("Коллекция сохранена.");
+                } else {
+                    boolean isWorking = true;
+                    String question = terminal.readLine("Ваша коллекция пуста. Вы хотите удалить содержимое файла? Y/N");
+                    while (isWorking) {
+                        if (question.equals("Y") || question.equals("y")) {
+                            isWorking = false;
+                            jsonParser.resetSaveFile();
+                            System.out.println("Вы очистили содержимое файла");
+                        } else if (question.equals("N") || question.equals("n")) {
+                            isWorking = false;
+                            System.out.println("Вы решили сохранить содержимое");
+                        } else System.out.println("Неверная комманда. Введите Y или N");
+                    }
                 }
-            } catch (NullPointerException e) {
-                boolean isWorking = true;
-                String question = terminal.readLine("Ваша коллекция пуста. Вы хотите удалить содержимое файла? Y/N");
-                while (isWorking) {
-                    if (question.equals("Y") || question.equals("y")) {
-                        isWorking = false;
-                        jsonParser.resetSaveFile();
-                        System.out.println("Вы очистили содержимое файла");
-                    } else if (question.equals("N") || question.equals("n")) {
-                        isWorking = false;
-                        System.out.println("Вы решили сохранить содержимое");
-                    } else System.out.println("Неверная комманда. Введите Y или N");
-                }
-            }
-        } else System.out.println("Недостаточно прав для изменения коллекции");
+            } else System.out.println("Недостаточно прав для изменения коллекции");
+        } catch (NullPointerException e) {
+            System.out.println("Шото случилось");
+        }
 
 
     }
 
     /**
      * Метод, реаллизующий вывод уникальных значений height
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      */
     public void printUniqueHeight(QueueController queueController) {
         Queue<Person> buf = new PriorityQueue<>(queueController.getQueue());
@@ -316,16 +317,12 @@ public class Controller {
     }
 
     /**
-     *
      * Метод добавляет новый объект, если он меньше остальных объектов коллекции
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекции
-     * @param arg1
-     * В качестве второго параметра на вход идет аргумент строки, содержаший объект для сравнения
-     * @throws SavePeopleException
-     * Может возникнуть в случае ошибки добавления объекта в коллекцию
-     * @throws NullPointerException
-     * Может возникнуть в случае ошибки работы программы
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекции
+     * @param arg1            В качестве второго параметра на вход идет аргумент строки, содержаший объект для сравнения
+     * @throws SavePeopleException  Может возникнуть в случае ошибки добавления объекта в коллекцию
+     * @throws NullPointerException Может возникнуть в случае ошибки работы программы
      */
     public void addIfMin(QueueController queueController, String arg1) throws SavePeopleException, NullPointerException {
         if (queueController.getQueue().size() > 0) {
@@ -347,10 +344,9 @@ public class Controller {
 
     /**
      * Метод выводит все элементы коллекции, которые начнинаются с подстроки
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param arg1
-     * В качестве второго параметра на ввод поступает подстрока, по которой идет проверка
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param arg1            В качестве второго параметра на ввод поступает подстрока, по которой идет проверка
      */
     public void filterStartsWithName(QueueController queueController, String arg1) {
         Queue<Person> bufQueue = new PriorityQueue<>(queueController.getQueue());
@@ -363,10 +359,9 @@ public class Controller {
 
     /**
      * Метод подсчитывает элементы коллекции с нужным цветом волос
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекции
-     * @param hairColor
-     * Параметр хранит в себе искомый цвет волос
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекции
+     * @param hairColor       Параметр хранит в себе искомый цвет волос
      */
     public void countByHairColor(QueueController queueController, HairColor hairColor) {
         System.out.println("В коллекции содержится " +
@@ -376,10 +371,9 @@ public class Controller {
 
     /**
      * Метод удаляет объект коллекции с данным id
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param id
-     * Второй аргумент хранит в себе id нужного элемента
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param id              Второй аргумент хранит в себе id нужного элемента
      */
     public void removeById(QueueController queueController, long id) {
         queueController.getQueue().removeIf(person -> person.getId() == id);
@@ -387,8 +381,8 @@ public class Controller {
 
     /**
      * Метод выводит последние 6 комманд
-     * @param history
-     * В качестве параметра на вход идет история введеных команд
+     *
+     * @param history В качестве параметра на вход идет история введеных команд
      */
     public void history(History history) {
         history.printHistory();
@@ -396,12 +390,10 @@ public class Controller {
 
     /**
      * Метод обновляет элемент коллекции с нужным id
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param id
-     * Параметр id хранит в себе id нужного объекта
-     * @param arg2
-     * Параметр arg2 хранит в себе параметры, которые нужно изменить
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param id              Параметр id хранит в себе id нужного объекта
+     * @param arg2            Параметр arg2 хранит в себе параметры, которые нужно изменить
      * @throws FindPersonException
      * @throws SavePeopleException
      */
@@ -417,8 +409,8 @@ public class Controller {
 
     /**
      * Метод очищает коллекцию
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      */
     public void clear(QueueController queueController) {
         Person person;
@@ -429,10 +421,9 @@ public class Controller {
 
     /**
      * Метод добавляет элемент коллекции, собирая его из аргумента. Недостающие элементы генерируются случайным образом
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param arg1
-     * Параметр хранит в себе элементы, которые нужно добавить в объект. Остальные элементы генерируются автоматически
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param arg1            Параметр хранит в себе элементы, которые нужно добавить в объект. Остальные элементы генерируются автоматически
      * @throws SavePeopleException
      */
     public void add(QueueController queueController, String arg1) throws SavePeopleException {
@@ -455,8 +446,8 @@ public class Controller {
 
     /**
      * Метод добавляет элемент коллекции, собирая его построчно.
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
      * @throws SavePeopleException
      */
     public void add(QueueController queueController) {
@@ -575,10 +566,9 @@ public class Controller {
 
     /**
      * Метод удаляет все элементы коллекции, меньше заданного
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param arg1
-     * Аргумент хранит в себе объект, с которым будут сравниваться другие элементы коллекции
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param arg1            Аргумент хранит в себе объект, с которым будут сравниваться другие элементы коллекции
      */
     public void remove_lower(QueueController queueController, String arg1) {
         try {
@@ -591,14 +581,11 @@ public class Controller {
 
     /**
      * Метод исполняет скрипт из файла
-     * @param queueController
-     * В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
-     * @param arg1
-     * Аргумент хранит в себе путь до файла
-     * @param history
-     * Аргумент хранит в себе историю Комманд и скриптов
-     * @param controller
-     * Аргумент хранит в себе controller
+     *
+     * @param queueController В качестве параметра на вход поступает объект класса queueController, который содержит в себе колекцию
+     * @param arg1            Аргумент хранит в себе путь до файла
+     * @param history         Аргумент хранит в себе историю Комманд и скриптов
+     * @param controller      Аргумент хранит в себе controller
      * @throws IOException
      */
     public void executeScript(QueueController queueController, String arg1, History history, Controller controller) throws IOException {

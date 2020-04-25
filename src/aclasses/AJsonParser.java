@@ -14,6 +14,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**
+ * @author Roclh
+ * @version 1.01v
+ *
+ * Парсер из объекта класса Person в формат json
+ */
 
 public abstract class AJsonParser implements IJsonParser {
     private File file = new File("C:\\Users\\Nikit\\Desktop\\ITMO\\Программирование\\lab5\\files\\person_info.json");
@@ -64,20 +70,21 @@ public abstract class AJsonParser implements IJsonParser {
      * Объект класса Person, чьи параметры мы записываем в файл
      * @throws IOException
      * Может выбрасывать исключение в случае неправильного файла
+     *
      */
     public void savePerson(Person person) throws IOException {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         FileOutputStream fileOutputStream = new FileOutputStream(file, true);
         fileOutputStream.write("{\r\n".getBytes());
-        fileOutputStream.write(("   \"id\": " + person.getId() + "\r\n").getBytes());
-        fileOutputStream.write(("   \"name\": \"" + person.getName() + "\"\r\n").getBytes());
-        fileOutputStream.write(("   \"coordinates\": {\r\n        \"X\": " + person.getCoordinates().getX().toString() + "\r\n        \"Y\": " + person.getCoordinates().getY() + "\r\n    }\r\n").getBytes());
-        fileOutputStream.write(("   \"creationDate\": " + dtf.format(person.getCreationDate()) + "\r\n").getBytes());
-        fileOutputStream.write(("   \"height\": " + person.getHeight().toString() + "\r\n").getBytes());
-        fileOutputStream.write(("   \"eyeColor\": \"" + person.getEyeColor().toString() + "\"\r\n").getBytes());
-        fileOutputStream.write(("   \"hairColor\": \"" + person.getHairColor().toString() + "\"\r\n").getBytes());
-        fileOutputStream.write(("   \"nationality\": \"" + person.getNationality().toString() + "\"\r\n").getBytes());
-        fileOutputStream.write(("   \"location\": {\r\n        \"X\": " + person.getLocation().getX().toString() + "\r\n        \"Y\": " + person.getLocation().getY().toString() + "\r\n        \"Z\": " + person.getLocation().getZ().toString() + "\r\n    }\r\n").getBytes());
+        fileOutputStream.write(("   \"id\": " + person.getId() + ",\r\n").getBytes());
+        fileOutputStream.write(("   \"name\": \"" + person.getName() + "\",\r\n").getBytes());
+        fileOutputStream.write(("   \"coordinates\": {\r\n        \"X\": " + person.getCoordinates().getX().toString() + ",\r\n        \"Y\": " + person.getCoordinates().getY() + "\r\n    },\r\n").getBytes());
+        fileOutputStream.write(("   \"creationDate\": \"" + dtf.format(person.getCreationDate()) + "\",\r\n").getBytes());
+        fileOutputStream.write(("   \"height\": " + person.getHeight().toString() + ",\r\n").getBytes());
+        fileOutputStream.write(("   \"eyeColor\": \"" + person.getEyeColor().toString() + "\",\r\n").getBytes());
+        fileOutputStream.write(("   \"hairColor\": \"" + person.getHairColor().toString() + "\",\r\n").getBytes());
+        fileOutputStream.write(("   \"nationality\": \"" + person.getNationality().toString() + "\",\r\n").getBytes());
+        fileOutputStream.write(("   \"location\": {\r\n        \"X\": " + person.getLocation().getX().toString() + ",\r\n        \"Y\": " + person.getLocation().getY().toString() + ",\r\n        \"Z\": " + person.getLocation().getZ().toString() + "\r\n    }\r\n").getBytes());
         fileOutputStream.write("}\r\n".getBytes());
     }
 
@@ -91,7 +98,9 @@ public abstract class AJsonParser implements IJsonParser {
         while (sc.hasNextLine()) {//Пока следующая строчка существует, проверяется наличие в строке id. После чего,
             buf = sc.nextLine();//следуя из формата, достается текст и конвертируется в тип long
             if (buf.contains("\"id\":")) {
-                idArray[i] = Long.parseLong(buf.substring(buf.indexOf("\": ") + 3));
+                buf = buf.substring(0, buf.lastIndexOf(","));
+                buf = buf.substring(buf.indexOf("\": ")+3);
+                idArray[i] = Long.parseLong(buf);
                 i++;
             }
         }
@@ -117,31 +126,31 @@ public abstract class AJsonParser implements IJsonParser {
                 if (buf.contains(Long.toString(id))) {
                     person.setId(id);
                     buf = sc.nextLine();
-                    person.setName(buf.substring(buf.indexOf("\": ") + 4, buf.length() - 1));
+                    person.setName(buf.substring(buf.indexOf("\"name\": \"")+9,buf.lastIndexOf("\",")));
                     buf = sc.nextLine();
                     buf = sc.nextLine();
-                    coordinates.setX(Long.valueOf(buf.substring(buf.indexOf("\": ") + 3)));
+                    coordinates.setX(Long.valueOf(buf.substring(buf.indexOf("\"X\": ")+5,buf.lastIndexOf(","))));
                     buf = sc.nextLine();
-                    coordinates.setY(Float.parseFloat(buf.substring(buf.indexOf("\": ") + 3)));
+                    coordinates.setY(Float.parseFloat(buf.substring(buf.indexOf("\"Y\": ")+5)));
                     person.setCoordinates(coordinates);
                     buf = sc.nextLine();
                     buf = sc.nextLine();
-                    person.setCreationDate(LocalDateTime.parse((buf.substring(buf.indexOf("\": ") + 3)).trim(), dtf));
+                    person.setCreationDate(LocalDateTime.parse(buf.substring(buf.indexOf("\"creationDate\": \"") + 17, buf.lastIndexOf("\",")), dtf));
                     buf = sc.nextLine();
-                    person.setHeight(Float.parseFloat(buf.substring(buf.indexOf("\": ") + 3)));
+                    person.setHeight(Float.parseFloat(buf.substring(buf.indexOf("\"height\": ") + 10,buf.lastIndexOf(","))));
                     buf = sc.nextLine();
-                    person.setEyeColor(EyeColor.valueOf(buf.substring(buf.indexOf("\": ") + 4, buf.length() - 1)));
+                    person.setEyeColor(EyeColor.valueOf(buf.substring(buf.indexOf("\"eyeColor\": \"") + 13, buf.lastIndexOf("\","))));
                     buf = sc.nextLine();
-                    person.setHairColor(HairColor.valueOf(buf.substring(buf.indexOf("\": ") + 4, buf.length() - 1)));
+                    person.setHairColor(HairColor.valueOf(buf.substring(buf.indexOf("\"hairColor\": \"") + 14, buf.lastIndexOf("\","))));
                     buf = sc.nextLine();
-                    person.setNationality(Country.valueOf(buf.substring(buf.indexOf("\": ") + 4, buf.length() - 1)));
+                    person.setNationality(Country.valueOf(buf.substring(buf.indexOf("\"nationality\": \"") + 16, buf.lastIndexOf("\","))));
                     buf = sc.nextLine();
                     buf = sc.nextLine();
-                    location.setX(Integer.valueOf(buf.substring(buf.indexOf("\": ") + 3)));
+                    location.setX(Integer.valueOf(buf.substring(buf.indexOf("\"X\": ")+5,buf.lastIndexOf(","))));
                     buf = sc.nextLine();
-                    location.setY(Float.parseFloat(buf.substring(buf.indexOf("\": ") + 3)));
+                    location.setY(Float.valueOf(buf.substring(buf.indexOf("\"Y\": ")+5,buf.lastIndexOf(","))));
                     buf = sc.nextLine();
-                    location.setZ(Float.parseFloat(buf.substring(buf.indexOf("\": ") + 3)));
+                    location.setZ(Float.valueOf(buf.substring(buf.indexOf("\"Z\": ")+5)));
                     person.setLocation(location);
                     idEnded = true;
                     System.out.println("Данные из файла взяты");
@@ -168,10 +177,6 @@ public abstract class AJsonParser implements IJsonParser {
             buf = sc.nextLine();
             if (buf.contains("\"id\":")) {
                 i++;
-            }
-            if (i > 28) {
-                System.out.println("В памяти хранится больше элементов, чем может сосчитать эта функция");
-                return i;
             }
         }
 
